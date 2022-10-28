@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -62,7 +62,7 @@ def upload(request):
 @login_required(login_url='signin')
 def like_post(request):
     username = request.user.username
-    post_id = request.GET.get('post_id')
+    post_id = request.POST.get('post_id')
     
     post = Post.objects.get(id=post_id)
     
@@ -73,12 +73,12 @@ def like_post(request):
         new_like.save()
         post.no_of_likes = post.no_of_likes + 1
         post.save()
-        return redirect('/')
+        return JsonResponse({'no_of_likes': post.no_of_likes})
     else:
         like_filter.delete()
         post.no_of_likes = post.no_of_likes - 1
         post.save()
-        return redirect('/')
+        return JsonResponse({'no_of_likes': post.no_of_likes})
 
 def signup(request):
     
